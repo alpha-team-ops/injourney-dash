@@ -49,75 +49,95 @@ export default function HistoricalHeatmapPage() {
               </div>
             </motion.div>
 
+            {/* Large Map - Full Width on Top */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-card border border-border rounded-lg overflow-hidden w-full h-96 relative"
+              style={{
+                backgroundImage: 'url(/borobudur-map.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              {/* Map Background Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-blue-900/20" />
+
+              {/* Heatmap Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-yellow-900/20 to-red-900/20" />
+
+              {/* Animated Density Points - Borobudur Areas */}
+              <motion.div
+                className={`absolute w-32 h-32 rounded-full blur-3xl`}
+                style={{
+                  top: '30%',
+                  left: '40%',
+                  background: `radial-gradient(circle, rgba(${currentDensity > 70 ? '239, 68, 68' : currentDensity > 40 ? '245, 158, 11' : '16, 185, 129'}, 0.4) 0%, transparent 70%)`,
+                }}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <motion.div
+                className="absolute w-24 h-24 rounded-full blur-2xl bg-gradient-radial from-yellow-500/30 to-yellow-500/0"
+                style={{ top: '55%', left: '25%' }}
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+              />
+              <motion.div
+                className="absolute w-20 h-20 rounded-full blur-xl bg-gradient-radial from-green-500/30 to-green-500/0"
+                style={{ top: '65%', left: '65%' }}
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
+              />
+
+              {/* Playback Info Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-card/80 backdrop-blur border border-border rounded-lg p-6 text-center">
+                  <p className="text-4xl font-bold text-foreground">{currentTime}:00</p>
+                  <p className="text-sm text-muted-foreground mt-2">{selectedDate}</p>
+                  <p className="text-lg font-semibold text-foreground mt-4">{currentDensity}% Density</p>
+                  <p className={`text-sm mt-2 ${currentDensity > 70 ? 'text-red-400' : currentDensity > 40 ? 'text-yellow-400' : 'text-green-400'}`}>
+                    {currentDensity > 70 ? 'High' : currentDensity > 40 ? 'Medium' : 'Low'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Time Legend */}
+              <div className="absolute bottom-4 left-4 space-y-2 bg-card/80 backdrop-blur border border-border rounded-lg p-3">
+                <p className="text-xs font-semibold text-foreground mb-2">Density Level</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                    <span className="text-xs text-muted-foreground">Low (&lt;40%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    <span className="text-xs text-muted-foreground">Medium (40-70%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <span className="text-xs text-muted-foreground">High (&gt;70%)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visitor Count */}
+              <div className="absolute top-4 right-4 bg-card/80 backdrop-blur border border-border rounded-lg p-4 text-right">
+                <p className="text-3xl font-bold text-foreground">{Math.round(currentDensity * 30)}</p>
+                <p className="text-xs text-muted-foreground">Visitors at {currentTime}:00</p>
+              </div>
+            </motion.div>
+
+            {/* Timeline Controls and Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Main Heatmap */}
+              {/* Main Content */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 className="lg:col-span-3 space-y-4"
               >
-                {/* Heatmap Container */}
-                <div className="bg-card border border-border rounded-lg overflow-hidden aspect-video relative">
-                  {/* Heatmap Background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-yellow-900/20 to-red-900/20" />
-
-                  {/* Animated Density Points */}
-                  <motion.div
-                    className={`absolute w-32 h-32 rounded-full blur-3xl`}
-                    style={{
-                      top: '30%',
-                      left: '35%',
-                      background: `radial-gradient(circle, rgba(${currentDensity > 70 ? '239, 68, 68' : currentDensity > 40 ? '245, 158, 11' : '16, 185, 129'}, 0.4) 0%, transparent 70%)`,
-                    }}
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                  <motion.div
-                    className="absolute w-24 h-24 rounded-full blur-2xl bg-gradient-radial from-yellow-500/30 to-yellow-500/0"
-                    style={{ top: '60%', left: '70%' }}
-                    animate={{ scale: [1, 1.15, 1] }}
-                    transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
-                  />
-
-                  {/* Playback Info Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-card/80 backdrop-blur border border-border rounded-lg p-6 text-center">
-                      <p className="text-4xl font-bold text-foreground">{currentTime}:00</p>
-                      <p className="text-sm text-muted-foreground mt-2">{selectedDate}</p>
-                      <p className="text-lg font-semibold text-foreground mt-4">{currentDensity}% Density</p>
-                      <p className={`text-sm mt-2 ${currentDensity > 70 ? 'text-red-400' : currentDensity > 40 ? 'text-yellow-400' : 'text-green-400'}`}>
-                        {currentDensity > 70 ? 'High' : currentDensity > 40 ? 'Medium' : 'Low'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Time Legend */}
-                  <div className="absolute bottom-4 left-4 space-y-2 bg-card/80 backdrop-blur border border-border rounded-lg p-3">
-                    <p className="text-xs font-semibold text-foreground mb-2">Density Level</p>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-green-500" />
-                        <span className="text-xs text-muted-foreground">Low (&lt;40%)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                        <span className="text-xs text-muted-foreground">Medium (40-70%)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500" />
-                        <span className="text-xs text-muted-foreground">High (&gt;70%)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Visitor Count */}
-                  <div className="absolute top-4 right-4 bg-card/80 backdrop-blur border border-border rounded-lg p-4 text-right">
-                    <p className="text-3xl font-bold text-foreground">{Math.round(currentDensity * 30)}</p>
-                    <p className="text-xs text-muted-foreground">Visitors at {currentTime}:00</p>
-                  </div>
-                </div>
-
                 {/* Timeline Controls */}
                 <div className="bg-card border border-border rounded-lg p-6 space-y-4">
                   <div className="flex items-center justify-between">
@@ -217,7 +237,7 @@ export default function HistoricalHeatmapPage() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
                 className="lg:col-span-1 space-y-4"
               >
                 {/* Date/Time Settings */}

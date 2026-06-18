@@ -46,125 +46,132 @@ export default function LiveHeatmapPage() {
               </div>
             </motion.div>
 
+            {/* Large Map - Full Width on Top */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="relative bg-card border border-border rounded-lg overflow-hidden w-full h-96"
+              style={{
+                backgroundImage: 'url(/borobudur-map.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              {/* Map Background Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-blue-900/20" />
+
+              {/* Heatmap Visualization */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-yellow-900/20 to-red-900/20" />
+
+              {/* Density Points - Borobudur Areas */}
+              <motion.div
+                className="absolute w-32 h-32 bg-gradient-radial from-red-500/40 to-red-500/0 rounded-full"
+                style={{ top: '30%', left: '40%' }}
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity }}
+              />
+              <motion.div
+                className="absolute w-24 h-24 bg-gradient-radial from-yellow-500/40 to-yellow-500/0 rounded-full"
+                style={{ top: '55%', left: '25%' }}
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+              />
+              <motion.div
+                className="absolute w-20 h-20 bg-gradient-radial from-green-500/40 to-green-500/0 rounded-full"
+                style={{ top: '65%', left: '65%' }}
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
+              />
+
+              {/* Controls Overlay */}
+              <div className="absolute top-4 right-4 flex gap-2 z-10">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setZoom(Math.min(zoom + 10, 200))}
+                  className="p-2 bg-card border border-border rounded-lg hover:bg-secondary/50 transition-colors"
+                >
+                  <Plus size={18} />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setZoom(Math.max(zoom - 10, 50))}
+                  className="p-2 bg-card border border-border rounded-lg hover:bg-secondary/50 transition-colors"
+                >
+                  <Minus size={18} />
+                </motion.button>
+              </div>
+
+              {/* Legend */}
+              <div className="absolute bottom-4 left-4 space-y-2 bg-card/80 backdrop-blur border border-border rounded-lg p-3">
+                <p className="text-xs font-semibold text-foreground mb-2">Density Level</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded" />
+                  <span className="text-xs text-muted-foreground">Low</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-yellow-500 rounded" />
+                  <span className="text-xs text-muted-foreground">Medium</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500 rounded" />
+                  <span className="text-xs text-muted-foreground">High</span>
+                </div>
+              </div>
+
+              {/* Visitor Count */}
+              <div className="absolute bottom-4 right-4 bg-card/80 backdrop-blur border border-border rounded-lg p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">2,345</p>
+                <p className="text-xs text-muted-foreground">Visitors Now</p>
+              </div>
+            </motion.div>
+
+            {/* Stats Grid Below Map */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="bg-card border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users size={18} className="text-primary" />
+                  <p className="text-xs text-muted-foreground">Peak Area</p>
+                </div>
+                <p className="text-lg font-bold text-foreground">Temple Main Area</p>
+                <p className="text-xs text-red-400 mt-1">85% capacity</p>
+              </div>
+              <div className="bg-card border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap size={18} className="text-yellow-400" />
+                  <p className="text-xs text-muted-foreground">Average Density</p>
+                </div>
+                <p className="text-lg font-bold text-foreground">{selectedAreaData.density}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Current</p>
+              </div>
+              <div className="bg-card border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle size={18} className="text-orange-400" />
+                  <p className="text-xs text-muted-foreground">High Density</p>
+                </div>
+                <p className="text-lg font-bold text-foreground">3 Areas</p>
+                <p className="text-xs text-orange-400 mt-1">Above 70%</p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Main Map Area */}
+              {/* Main Content Area */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 className="lg:col-span-3 space-y-4"
               >
-                {/* Heatmap Container */}
-                <div className="relative bg-card border border-border rounded-lg overflow-hidden aspect-video">
-                  {/* Map Background */}
-                  <div className="absolute inset-0 bg-secondary/20 flex items-center justify-center">
-                    <div className="text-center">
-                      <Navigation2 size={48} className="text-primary mx-auto mb-4 opacity-50" />
-                      <p className="text-muted-foreground text-sm">Interactive heatmap map will render here</p>
-                    </div>
-                  </div>
-
-                  {/* Heatmap Visualization */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-900/30 via-yellow-900/30 to-red-900/30" />
-
-                  {/* Density Points */}
-                  <motion.div
-                    className="absolute w-24 h-24 bg-gradient-radial from-red-500/40 to-red-500/0 rounded-full"
-                    style={{ top: '35%', left: '25%' }}
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  />
-                  <motion.div
-                    className="absolute w-20 h-20 bg-gradient-radial from-yellow-500/40 to-yellow-500/0 rounded-full"
-                    style={{ top: '55%', left: '65%' }}
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                  />
-                  <motion.div
-                    className="absolute w-16 h-16 bg-gradient-radial from-green-500/40 to-green-500/0 rounded-full"
-                    style={{ top: '70%', left: '40%' }}
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                  />
-
-                  {/* Controls Overlay */}
-                  <div className="absolute top-4 right-4 flex gap-2 z-10">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setZoom(Math.min(zoom + 10, 200))}
-                      className="p-2 bg-card border border-border rounded-lg hover:bg-secondary/50 transition-colors"
-                    >
-                      <Plus size={18} />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setZoom(Math.max(zoom - 10, 50))}
-                      className="p-2 bg-card border border-border rounded-lg hover:bg-secondary/50 transition-colors"
-                    >
-                      <Minus size={18} />
-                    </motion.button>
-                  </div>
-
-                  {/* Legend */}
-                  <div className="absolute bottom-4 left-4 space-y-2 bg-card/80 backdrop-blur border border-border rounded-lg p-3">
-                    <p className="text-xs font-semibold text-foreground mb-2">Density</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-green-500 rounded" />
-                      <span className="text-xs text-muted-foreground">Low</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-yellow-500 rounded" />
-                      <span className="text-xs text-muted-foreground">Medium</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-red-500 rounded" />
-                      <span className="text-xs text-muted-foreground">High</span>
-                    </div>
-                  </div>
-
-                  {/* Visitor Count */}
-                  <div className="absolute bottom-4 right-4 bg-card/80 backdrop-blur border border-border rounded-lg p-4 text-center">
-                    <p className="text-3xl font-bold text-foreground">2,345</p>
-                    <p className="text-xs text-muted-foreground">Visitors Now</p>
-                  </div>
-                </div>
-
-                {/* Current Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-card border border-border rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Users size={18} className="text-primary" />
-                      <p className="text-xs text-muted-foreground">Peak Area</p>
-                    </div>
-                    <p className="text-lg font-bold text-foreground">Safari Area</p>
-                    <p className="text-xs text-red-400 mt-1">85% capacity</p>
-                  </div>
-                  <div className="bg-card border border-border rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Zap size={18} className="text-yellow-400" />
-                      <p className="text-xs text-muted-foreground">Average Density</p>
-                    </div>
-                    <p className="text-lg font-bold text-foreground">{selectedAreaData.density}%</p>
-                    <p className="text-xs text-muted-foreground mt-1">Current</p>
-                  </div>
-                  <div className="bg-card border border-border rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertCircle size={18} className="text-orange-400" />
-                      <p className="text-xs text-muted-foreground">High Density</p>
-                    </div>
-                    <p className="text-lg font-bold text-foreground">3 Areas</p>
-                    <p className="text-xs text-orange-400 mt-1">Above 70%</p>
-                  </div>
-                </div>
+                {/* Additional Info Sections */}
               </motion.div>
 
               {/* Right Sidebar - Area List */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
                 className="lg:col-span-1 space-y-4"
               >
                 <div className="bg-card border border-border rounded-lg p-4">
